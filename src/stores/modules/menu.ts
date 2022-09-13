@@ -3,7 +3,7 @@ import { ywxtMenus, getMenus } from "@/api/menu";
 
 interface menuState {
   menus: { [key: string]: any },
-  defaultHref: null | string,
+  defaultHref?: string,
   ywxt: []
 }
 
@@ -11,20 +11,23 @@ export const useMenuStore = defineStore('menu', {
   state: (): menuState => {
     return {
       menus: {},
-      defaultHref: null,
+      defaultHref: undefined,
       ywxt: []
     }
   },
   getters:{
     getMenus():menuState['menus'] {
       return this.menus;
+    },
+    getDefaultHref():menuState['defaultHref']{
+        return this.defaultHref;
     }
   },
   actions: {
     setYWXT(ywxts:any){
       this.ywxt = ywxts || [];
       if (!ywxts || !ywxts.length) {
-        this.defaultHref = null
+        this.defaultHref = undefined
         return
       }
       this.defaultHref = `/${ywxts[0].path}`

@@ -3,11 +3,13 @@
     <Header></Header>
     <Sidebar></Sidebar>
     <div class="content-box" :class="{ 'content-collapse': sidebarCollapse }">
-      <transition name="move" mode="out-in">
-        <keep-alive :include="tagsList">
-          <router-view></router-view>
-        </keep-alive>
-      </transition>
+      <RouterView>
+        <transition name="move" mode="out-in">
+          <keep-alive :include="tagsList">
+            <component :is="Component" />
+          </keep-alive>
+        </transition>
+      </RouterView>
       <el-backtop target=".content"></el-backtop>
     </div>
   </div>
@@ -16,8 +18,7 @@
 import Header from "./components/Header/index.vue";
 import Sidebar from "./components/Sidebar/index.vue";
 import { reactive, computed, defineComponent } from "vue";
-import { useAppStore } from "@/stores/app";
-
+import { useAppStore } from "@/stores/modules/app";
 
 export default defineComponent({
   name: "Layout",
