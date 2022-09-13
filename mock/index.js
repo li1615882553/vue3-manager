@@ -1,5 +1,5 @@
 import Mock from 'mockjs';
-// import sysMenus from "./menu"
+import sysMenus from "./menu"
 //延时200-600毫秒请求到数据
 Mock.setup({
   timeout: '100-200'
@@ -29,7 +29,7 @@ Mock.mock('app/ywxts', 'get', (data) => {
 });
 Mock.mock(/app\/menu[\s\S]*?/, 'get', (data) => {
   const sysName = data.url.slice(data.url.lastIndexOf("/")+1);
-  // return sysMenus[sysName];
+  return sysMenus[sysName];
 });
 
 Mock.mock('user/login', 'post', (data) => {

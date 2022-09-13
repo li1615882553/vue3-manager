@@ -78,8 +78,8 @@
 import { defineComponent, ref, computed } from 'vue';
 import { ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
-import { useAppStore } from "@/stores/app";
-import { useUserStore } from "@/stores/user";
+import { useAppStore } from "@/stores/modules/app";
+import { useUserStore } from "@/stores/modules/user";
 import SvgIcon from "@/components/Icon";
 
 export default defineComponent({

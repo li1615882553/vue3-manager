@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import cookieAuthInfo from "@/util/cookie";
 import { login as userLogin, logout as userLogout, getUserInfo } from "@/api/user";
-import router from '@/router';
+import { router } from '@/router';
 import { useMenuStore } from "./menu";
 import { useAppStore } from "./app";
 

@@ -1,5 +1,5 @@
 import axios, { type AxiosRequestConfig, type CancelTokenSource } from 'axios'
-import router from "@/router";
+import { router } from "@/router";
 import cookieAuthInfo from "@/util/cookie";
 
 const CancelToken = axios.CancelToken;
