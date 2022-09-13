@@ -6,3 +6,13 @@ export function getSystemFromPath(path:string) {
   }
   return tempArr[1]
 }
+
+export function combinPath(basePath:string, path:string){
+  if(basePath.endsWith("/")){
+    basePath = basePath.slice(0, basePath.length - 1);
+  }
+  if(path.startsWith("/")){
+    path = path.slice(1, path.length);
+  }
+  return `${basePath}/${path}`
+}

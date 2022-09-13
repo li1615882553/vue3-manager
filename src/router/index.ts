@@ -36,14 +36,14 @@ const layoutRouter: RouteRecordRaw[] = [
       ...allRouter
     ]
   },
-  {
-    name: 'NotFound',
-    path: '/:catchAll(.*)',
-    redirect: '/404'
-  }
+  // {
+  //   name: 'NotFound',
+  //   path: '/:catchAll(.*)',
+  //   redirect: '/404'
+  // }
 ]
 const routers = withoutAuthorityRoot.concat(layoutRouter)
-
+console.log(routers)
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: routers

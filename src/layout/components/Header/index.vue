@@ -75,7 +75,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, watch } from 'vue';
 import { ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { useAppStore } from "@/stores/modules/app";

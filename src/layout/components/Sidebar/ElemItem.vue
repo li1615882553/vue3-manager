@@ -1,5 +1,9 @@
+<template v-slot="title">
+  <SvgIcon class="sidebar-svg" :name="icon"></SvgIcon>
+  <span>{{ title }}</span>
+</template>
 <script lang="ts">
-import { defineComponent, h } from 'vue';
+import { defineComponent } from 'vue';
 import SvgIcon from "@/components/Icon";
 
 export default defineComponent({
@@ -15,17 +19,17 @@ export default defineComponent({
       default: ''
     }
   },
-  render() {
-    const vnodes = []
-    if (this.icon) {
-      vnodes.push(h(SvgIcon, { class: "sidebar-svg", name: this.icon }))
-    }
+  // render() {
+  //   const vnodes = []
+  //   if (this.icon) {
+  //     vnodes.push(h(SvgIcon, { class: "sidebar-svg", name: this.icon }))
+  //   }
 
-    if (this.title) {
-      vnodes.push(h('span', { slot: "title" }, this.title))
-    }
-    return vnodes;
-  }
+  //   if (this.title) {
+  //     vnodes.push(h('span', { slot: "title" }, this.title))
+  //   }
+  //   return vnodes;
+  // }
 })
 </script>
 <style scoped lang="scss">
