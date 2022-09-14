@@ -3,7 +3,7 @@
 		<div class="tags" ref="tags">
 			<div class="tags-inner" :class="{ 'tags-lrbtn': hasOverFlow }">
 				<div class="handlerMove left" @click="handlerMove(-80)">
-					<Icon icon-class="fangxiang-zuo-shuangxian" :width="16" :height="16"></Icon>
+					<SvgIcon name="arrow-left" size="16"></SvgIcon>
 				</div>
 				<ul ref="tags-ul" :class="{ shrink: hasOverFlow }">
 					<li class="tags-li" v-for="(item, index) in tagsList" :class="{ active: isActive(item.path) }" :key="index"
@@ -17,7 +17,7 @@
 					</li>
 				</ul>
 				<div class="handlerMove right" @click="handlerMove(80)">
-					<i class="el-icon-d-arrow-right"></i>
+					<SvgIcon name="arrow-right" size="16"></SvgIcon>
 				</div>
 			</div>
 		</div>
@@ -47,23 +47,6 @@ const collapse = computed(() => appStore.getSidebarCollapse);
 
 onBeforeMount(() => {
 	setTags(router.currentRoute.value);
-	// 监听关闭当前页面的标签页
-	// this.eventBus.$on("close_current_tags", () => {
-	// 	for (let i = 0, len = this.tagsList.length; i < len; i++) {
-	// 		const item = this.tagsList[i];
-	// 		if (item.path === this.$route.fullPath) {
-	// 			if (i < len - 1) {
-	// 				this.$router.push(this.tagsList[i + 1].path);
-	// 			} else if (i > 0) {
-	// 				this.$router.push(this.tagsList[i - 1].path);
-	// 			} else {
-	// 				this.$router.push("/");
-	// 			}
-	// 			this.tagsList.splice(i, 1);
-	// 			break;
-	// 		}
-	// 	}
-	// });
 })
 
 onMounted(() => {
@@ -91,7 +74,7 @@ function handlerWheel(e: WheelEvent) {
 	const scrollWidth = ulElement!.scrollWidth;
 	const clientWidth = ulElement!.clientWidth;
 	if (scrollWidth > clientWidth) {
-		if (e.deltaY < 0) {
+		if (e.deltaY > 0) {
 			ulElement!.scrollLeft +=
 				scrollWidth - clientWidth > 20 ? 20 : scrollWidth - clientWidth;
 		} else {
@@ -314,10 +297,14 @@ function handlerShowMenu(event:MouseEvent) {
 }
 
 .handlerMove {
+	cursor: pointer;
 	position: absolute;
 	width: 20px;
+	top: 0px;
 	visibility: hidden;
-	top: 7px;
+	svg{
+		vertical-align: baseline;
+	}
 }
 
 .left {}

@@ -1,6 +1,6 @@
 <template>
 	<div class="content">
-		<RouterView>
+		<RouterView v-slot="{ Component }">
 			<transition name="fade-transform" mode="out-in">
 				<component :is="Component" />
 			</transition>
@@ -10,6 +10,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 export default defineComponent({
-	name: "Layout"
+	name: "Layout",
+	components: {},
+	setup: () => {}
 });
 </script>

@@ -7,21 +7,21 @@ const route = [
       {
         name: 'Hello1',
         path: "hello",
-        component: () => import('../view/hello/index.vue'),
+        component: () => import('../views/hello/index.vue'),
         meta:{
           title: "hello"
         }
       }, {
         name: 'Creation',
         path: "creationPage",
-        component: () => import('../view/PoetsZoom/creationPage.vue'),
+        component: () => import('../views/hello/index.vue'),
         meta:{
           title: "Creation"
         }
       }, {
         name: 'Zoom',
         path: "zoomPage",
-        component: () => import('../view/PoetsZoom/Zoom.vue'),
+        component: () => import('../views/hello/index.vue'),
         meta:{
           title: "Zoom"
         }

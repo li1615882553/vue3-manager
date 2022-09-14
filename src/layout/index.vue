@@ -4,14 +4,14 @@
     <Sidebar></Sidebar>
     <div class="content-box" :class="{ 'content-collapse': sidebarCollapse }">
       <Tags></Tags>
-      <RouterView>
+      <RouterView v-slot="{ Component }">
         <transition name="move" mode="out-in">
           <keep-alive :include="tagsList">
             <component :is="Component" />
           </keep-alive>
         </transition>
       </RouterView>
-      <!-- <el-backtop target=".content"></el-backtop> -->
+      <el-backtop target=".content"></el-backtop>
     </div>
   </div>
 </template>

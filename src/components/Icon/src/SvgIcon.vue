@@ -1,13 +1,12 @@
 <template>
-    <svg aria-hidden="true" :class="[$attrs.class, 'svg-icon']" :style="getStyle" @mouseenter="color = hover"
-        @mouseleave="color = normal">
-        <use :href="symbolId" :fill="color" />
+    <svg aria-hidden="true" :class="[$attrs.class, 'svg-icon']" :style="getStyle">
+        <use :href="symbolId" />
     </svg>
 </template>
 
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
-import { toRefs, ref, onMounted, computed } from 'vue';
+import { computed } from 'vue';
 
 const props = defineProps({
     prefix: {
@@ -21,20 +20,7 @@ const props = defineProps({
     size: {
         type: [Number, String],
         default: 16
-    },
-    normal: {
-        type: String,
-        default: ''
-    },
-    hover: {
-        type: String,
-        default: ''
     }
-})
-const { normal, hover } = toRefs(props)
-const color = ref('')
-onMounted(() => {
-    color.value = normal.value
 })
 const symbolId = computed(() => `#${props.prefix}-${props.name}`)
 const getStyle = computed((): CSSProperties => {

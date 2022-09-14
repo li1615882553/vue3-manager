@@ -7,7 +7,7 @@ const route = [
       {
         name: 'admin菜单一',
         path: "admin-1",
-        component: () => import('../view/hello/index.vue'),
+        component: () => import('../views/hello/index.vue'),
         meta:{
           title: "admin菜单一"
         }
@@ -15,12 +15,12 @@ const route = [
       {
         name: 'admin菜单二',
         path: "admin-2",
-        component: () => import('../view/hello/index.vue'),
+        component: () => import('../views/hello/index.vue'),
         children:[
           {
             name: 'admin菜单二--一',
             path: "admin-2-1",
-            component: () => import('../view/hello/index.vue'),
+            component: () => import('../views/hello/index.vue'),
             meta:{
               title: "admin菜单二--一"
             }
