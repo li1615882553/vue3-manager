@@ -43,7 +43,6 @@ const layoutRouter: RouteRecordRaw[] = [
   // }
 ]
 const routers = withoutAuthorityRoot.concat(layoutRouter)
-console.log(routers)
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: routers

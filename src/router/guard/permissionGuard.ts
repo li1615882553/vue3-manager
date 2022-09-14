@@ -33,10 +33,9 @@ export function createPermissionGuard(router: Router) {
     let href = menuStore.getDefaultHref;
     if (!href) {
       try {
-        await menuStore.getYwxt()
+        await menuStore.obtainYwxt()
         const redirect = to.query.redirect && decodeURIComponent(to.query['redirect'] as string)
-        next(redirect || menuStore.getDefaultHref!)
-        return;
+        return next(redirect || menuStore.getDefaultHref!)
       } catch (e) {
         return next('/401');
       }
@@ -56,7 +55,7 @@ export function createPermissionGuard(router: Router) {
   }
 
   //切换系统时调用
-  async function changeSysGuard(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
+  async function changeSysGuard(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {  
     const toSysName = getSystemFromPath(to.path)
     const currSysName = appStore.getCurSystem;
     const toSysConfig = FrmConfig.sysConfig[toSysName]
@@ -64,8 +63,7 @@ export function createPermissionGuard(router: Router) {
 
     if (!toSysConfig) {
       currSysConfig && currSysConfig.leave && (await currSysConfig.leave());
-      next();
-      return;
+      return next();
     }
 
     appStore.changeSys(toSysConfig);
@@ -74,8 +72,6 @@ export function createPermissionGuard(router: Router) {
     currSysConfig && currSysConfig.leave && (await currSysConfig.leave())
     toSysConfig.enter && (await toSysConfig.enter())
     to.path === `/${toSysName}` && toSysConfig.startPage !== '/' ? next(`/${toSysName}${toSysConfig.startPage}`) : next()
-
-    next();
   }
 
   //验证信息失败,退汇登录页
@@ -95,7 +91,7 @@ export function createPermissionGuard(router: Router) {
   async function recoverUserInfo() {
     try {
       await userStore.recoverUserInfo(cookieAuthInfo.token!);
-      await menuStore.getYwxt();
+      await menuStore.obtainYwxt();
       return true;
     } catch (err) {
       return false

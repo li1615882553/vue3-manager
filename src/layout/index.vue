@@ -3,6 +3,7 @@
     <Header></Header>
     <Sidebar></Sidebar>
     <div class="content-box" :class="{ 'content-collapse': sidebarCollapse }">
+      <Tags></Tags>
       <RouterView>
         <transition name="move" mode="out-in">
           <keep-alive :include="tagsList">
@@ -17,12 +18,13 @@
 <script>
 import Header from "./components/Header/index.vue";
 import Sidebar from "./components/Sidebar/index.vue";
+import Tags from "./components/Tags/index.vue";
 import { reactive, computed, defineComponent } from "vue";
 import { useAppStore } from "@/stores/modules/app";
 
 export default defineComponent({
   name: "Layout",
-  components: { Header, Sidebar },
+  components: { Header, Sidebar, Tags },
   setup() {
     const appStore = useAppStore();
     
