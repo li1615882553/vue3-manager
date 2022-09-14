@@ -1,9 +1,8 @@
 <template>
   <div class="sidebar">
-    {{ menus }}
     <el-menu class="sidebar-el-menu" :collapse="sidebarCollapse" :default-active="$route.path" background-color="#324157"
       active-text-color="#20a0ff" text-color="#bfcbd9">
-      <sub-elem v-for="route in menus" :key="route.name" :item="route" :basePath="curSystem">
+      <sub-elem v-for="route in menus" :key="route.path" :item="route" :basePath="curSystem">
       </sub-elem>
     </el-menu>
   </div>
@@ -22,7 +21,6 @@ export default defineComponent({
 
     const curSystem = computed(() => appStore.getCurSystem);
     const menus = computed(() => {
-      debugger
       const curSys = appStore.getCurSystem;
       var menuTemp = [];
       if (curSys && menuStore.getMenus[curSys] &&

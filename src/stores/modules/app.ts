@@ -28,6 +28,7 @@ export const useAppStore = defineStore('app', {
       return this.curSys;
     },
     getSidebarCollapse(): appState['sidebar'] {
+      console.log(`sidebar  ${this.sidebar}`)
       return this.sidebar;
     }
   },

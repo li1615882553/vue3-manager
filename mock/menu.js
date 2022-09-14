@@ -21,5 +21,4 @@ Object.keys(sysRouterMeta).forEach(path => {
     const value = sysRouterMeta[path].default;  // 返回引入的信息
     sysMenus[key] = getMenusFromRoute(value)
 });
-
 export default sysMenus
