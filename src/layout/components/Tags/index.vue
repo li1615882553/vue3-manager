@@ -6,13 +6,13 @@
 					<Icon icon-class="fangxiang-zuo-shuangxian" :width="16" :height="16"></Icon>
 				</div>
 				<ul ref="tags-ul" :class="{ shrink: hasOverFlow }">
-					<li class="tags-li" v-for="(item, index) in tagsList" :class="{ active: isActive(item.path) }"
-						:key="index" @contextmenu.prevent="handlerShowMenu">
+					<li class="tags-li" v-for="(item, index) in tagsList" :class="{ active: isActive(item.path) }" :key="index"
+						@contextmenu.prevent="handlerShowMenu">
 						<router-link :to="item.path" :id="index" class="tags-li-title">
 							{{ item.title }}
 						</router-link>
-						<span class="tags-li-icon" @click="closeTags(index)">
-							<i class="el-icon-close"></i>
+						<span class="tags-li-icon" @click="closeTags(''+index)">
+							<SvgIcon name="close" size="12"></SvgIcon>
 						</span>
 					</li>
 				</ul>
@@ -30,193 +30,170 @@
 	</div>
 </template>
 
-<script>
-export default {
-	inject: ["eventBus"],
+<script lang="ts" setup>
+import { computed, onMounted, onBeforeUnmount, ref, reactive, nextTick, onBeforeMount, watch } from "vue";
+import { useAppStore } from "@/stores/modules/app";
+import { useRouter } from 'vue-router';
+import type { RouteLocationNormalizedLoaded } from 'vue-router';
+import SvgIcon from "@/components/Icon";
 
-	data() {
-		return {
-			tagsList: [],
-			hasOverFlow: false,
-			showMenu: false,
-			currentId: null,
-		};
-	},
-	computed: {
-		collapse() {
-			return this.$store.getters.sidebarCollapse;
-		},
-	},
-	mounted() {
-		const tagElement = document.querySelector(".tags");
-		tagElement.addEventListener("mousewheel", this.handlerWheel);
-		window.addEventListener("resize", this.handlerResize);
-		document.addEventListener("click", () => (this.showMenu = false));
-		// // 阻止全局右键菜单事件
-		// window.oncontextmenu = function () {
-		//   return false;
-		// }
-	},
-	beforeDestroyed() {
-		const tagElement = document.querySelector(".tags");
-		tagElement.removeEventListener("mousewheel", this.handlerWheel);
-		window.removeEventListener("resize", this.handlerResize);
-		document.removeEventListener("click", () => (this.showMenu = false));
-	},
-	methods: {
-		isActive(path) {
-			return path === this.$route.fullPath;
-		},
-		// 关闭单个标签
-		closeTags(index) {
-			const delItem = this.tagsList.splice(index, 1)[0];
-			const item = this.tagsList[index]
-				? this.tagsList[index]
-				: this.tagsList[index - 1];
-			if (item) {
-				delItem.path === this.$route.fullPath && this.$router.push(item.path);
-			} else {
-				this.$router.push("/");
-			}
-			this.judgeLRBtn();
-		},
-		// 关闭全部标签
-		// closeAll() {
-		// 	this.tagsList = [];
-		// 	this.$router.push("/");
-		// 	this.hasOverFlow = false;
-		// },
-		// 关闭其他标签
-		closeOther(currentId) {
-			this.tagsList = this.tagsList.slice(+currentId, +currentId + 1);
-			this.hasOverFlow = false;
-		},
-		// 设置标签
-		setTags(route) {
-			const isExist = this.tagsList.some((item) => {
-				return item.path === route.fullPath;
-			});
-			if (!isExist) {
-				this.tagsList.push({
-					title: route.meta.title,
-					path: route.fullPath,
-					name: route.matched[1].components.default.name,
-				});
-			}
-			this.eventBus.$emit("tags", this.tagsList);
-		},
-		handleTags(command) {
-			command === "other" ? this.closeOther() : this.closeAll();
-		},
-		handlerWheel(e) {
-			const ulElement = document.querySelector(".tags ul");
-			const scrollWidth = ulElement.scrollWidth;
-			const clientWidth = ulElement.clientWidth;
-			if (scrollWidth > clientWidth) {
-				if (e.wheelDeltaY < 0) {
-					ulElement.scrollLeft +=
-						scrollWidth - clientWidth > 20 ? 20 : scrollWidth - clientWidth;
-				} else {
-					ulElement.scrollLeft -=
-						scrollWidth - clientWidth > 20 ? 20 : scrollWidth - clientWidth;
-				}
-			}
-		},
-		judgeLRBtn() {
-			this.$nextTick(() => {
-				const ulElement = document.querySelector(".tags ul");
-				if (ulElement.scrollWidth === ulElement.clientWidth) {
-					this.hasOverFlow = false;
-				} else {
-					this.hasOverFlow = true;
-				}
-			});
-		},
-		scrollToActive() {
-			const activeLi = document.querySelector(".tags-li.active");
-			const ulElement = document.querySelector(".tags ul");
-			// console.log('改变前',activeLi.offsetLeft, activeLi.clientWidth, ulElement.scrollWidth, ulElement.clientWidth, ulElement.scrollLeft)
-			// 向前改变scrollLeft
-			if (ulElement.scrollLeft > activeLi.offsetLeft) {
-				ulElement.scrollLeft = activeLi.offsetLeft;
-				if (this.hasOverFlow) {
-					ulElement.scrollLeft -= 20;
-				}
-			} else if (
-				activeLi.offsetLeft >
-				ulElement.clientWidth - activeLi.clientWidth
-			) {
-				// 向后改变 scrollLeft
-				ulElement.scrollLeft =
-					activeLi.offsetLeft - ulElement.clientWidth + activeLi.clientWidth;
-			}
-			// console.log('改变后', activeLi.offsetLeft, ulElement.scrollWidth, ulElement.clientWidth, ulElement.scrollLeft)
-		},
-		async handlerResize() {
-			await this.judgeLRBtn();
-			this.$nextTick(() => {
-				this.scrollToActive();
-			});
-		},
-		handlerMove(value) {
-			const ulElement = document.querySelector(".tags ul");
-			if (
-				ulElement.scrollLeft < 0 ||
-				ulElement.scrollLef > ulElement.scrollWidth - ulElement.clientWidth
-			)
-				return;
-			if (value < 0) {
-				ulElement.scrollLeft += Math.max(value, -1 * ulElement.scrollLeft);
-			} else {
-				ulElement.scrollLeft += Math.min(
-					value,
-					ulElement.scrollWidth - ulElement.clientWidth
-				);
-			}
-		},
-		handlerShowMenu(event) {
-			this.currentId = event.target.id;
-			// 使用在当前relative相对位置确定菜单位置
-			const menuContain = document.querySelector(".tagItem-menu");
-			if (event.pageX + 80 > document.body.clientWidth) {
-				menuContain.style.left =
-					document.body.clientWidth - 80 - (this.collapse ? 65 : 250) + "px";
-			} else {
-				menuContain.style.left =
-					event.pageX - (this.collapse ? 65 : 250) + "px";
-			}
+const router = useRouter();
+const appStore = useAppStore();
+const hasOverFlow = ref(false);
+const showMenu = ref(false);
+let tagsList: Array<{ title: string, path: string }> = reactive([]);
+const currentId = ref('');
+const collapse = computed(() => appStore.getSidebarCollapse);
 
-			this.showMenu = true;
-		},
-	},
-	watch: {
-		$route(newValue) {
-			this.setTags(newValue);
-			this.$nextTick(() => {
-				this.handlerResize();
-			});
-		},
-	},
-	created() {
-		this.setTags(this.$route);
-		// 监听关闭当前页面的标签页
-		this.eventBus.$on("close_current_tags", () => {
-			for (let i = 0, len = this.tagsList.length; i < len; i++) {
-				const item = this.tagsList[i];
-				if (item.path === this.$route.fullPath) {
-					if (i < len - 1) {
-						this.$router.push(this.tagsList[i + 1].path);
-					} else if (i > 0) {
-						this.$router.push(this.tagsList[i - 1].path);
-					} else {
-						this.$router.push("/");
-					}
-					this.tagsList.splice(i, 1);
-					break;
-				}
-			}
+onBeforeMount(() => {
+	setTags(router.currentRoute.value);
+	// 监听关闭当前页面的标签页
+	// this.eventBus.$on("close_current_tags", () => {
+	// 	for (let i = 0, len = this.tagsList.length; i < len; i++) {
+	// 		const item = this.tagsList[i];
+	// 		if (item.path === this.$route.fullPath) {
+	// 			if (i < len - 1) {
+	// 				this.$router.push(this.tagsList[i + 1].path);
+	// 			} else if (i > 0) {
+	// 				this.$router.push(this.tagsList[i - 1].path);
+	// 			} else {
+	// 				this.$router.push("/");
+	// 			}
+	// 			this.tagsList.splice(i, 1);
+	// 			break;
+	// 		}
+	// 	}
+	// });
+})
+
+onMounted(() => {
+	const tagElement = document.querySelector<HTMLDivElement>(".tags");
+	tagElement!.addEventListener("wheel", handlerWheel);
+	window.addEventListener("resize", handlerResize);
+	document.addEventListener("click", () => (showMenu.value = false));
+});
+onBeforeUnmount(() => {
+	const tagElement = document.querySelector<HTMLDivElement>(".tags");
+	tagElement!.removeEventListener("wheel", handlerWheel);
+	window.removeEventListener("resize", handlerResize);
+	document.removeEventListener("click", () => (showMenu.value = false));
+});
+
+watch(router.currentRoute, (newVal) => {
+	setTags(newVal);
+	nextTick(() => {
+		handlerResize();
+	});
+})
+
+function handlerWheel(e: WheelEvent) {
+	const ulElement = document.querySelector(".tags ul");
+	const scrollWidth = ulElement!.scrollWidth;
+	const clientWidth = ulElement!.clientWidth;
+	if (scrollWidth > clientWidth) {
+		if (e.deltaY < 0) {
+			ulElement!.scrollLeft +=
+				scrollWidth - clientWidth > 20 ? 20 : scrollWidth - clientWidth;
+		} else {
+			ulElement!.scrollLeft -=
+				scrollWidth - clientWidth > 20 ? 20 : scrollWidth - clientWidth;
+		}
+	}
+}
+async function handlerResize() {
+	await judgeLRBtn();
+	nextTick(() => {
+		scrollToActive();
+	});
+}
+function scrollToActive() {
+	const activeLi = document.querySelector<HTMLElement>(".tags-li.active")!;
+	const ulElement = document.querySelector<HTMLElement>(".tags ul")!;
+	// 向前改变scrollLeft
+	if (ulElement.scrollLeft > activeLi.offsetLeft) {
+		ulElement.scrollLeft = activeLi.offsetLeft;
+		if (hasOverFlow) {
+			ulElement.scrollLeft -= 20;
+		}
+	} else if (
+		activeLi.offsetLeft >
+		ulElement.clientWidth - activeLi.clientWidth
+	) {
+		// 向后改变 scrollLeft
+		ulElement.scrollLeft =
+			activeLi.offsetLeft - ulElement.clientWidth + activeLi.clientWidth;
+	}
+};
+function judgeLRBtn() {
+	nextTick(() => {
+		const ulElement = document.querySelector<HTMLElement>(".tags ul")!;
+		if (ulElement.scrollWidth === ulElement.clientWidth) {
+			hasOverFlow.value = false;
+		} else {
+			hasOverFlow.value = true;
+		}
+	});
+};
+function isActive(path: string) {
+	return path === router.currentRoute.value.fullPath;
+};
+// 关闭单个标签
+function closeTags(currentId: string) {
+	const delItem = tagsList.splice(+currentId, 1)[0];
+	const item = tagsList[+currentId] ? tagsList[+currentId] : tagsList[+currentId - 1];
+	if (item) {
+		delItem.path === router.currentRoute.value.fullPath && router.push(item.path);
+	} else {
+		router.push("/");
+	}
+	judgeLRBtn();
+}
+// 关闭其他标签
+function closeOther(currentId: string) {
+	tagsList = tagsList.slice(+currentId, +currentId + 1);
+	hasOverFlow.value = false;
+};
+// 设置标签
+function setTags(route: RouteLocationNormalizedLoaded) {
+	const isExist = tagsList.some((item) => {
+		return item.path === route.fullPath;
+	});
+	if (!isExist) {
+		tagsList.push({
+			title: route.meta.title as string,
+			path: route.fullPath,
+			// name: route.matched[1].components && route.matched[1].components.default.name,
 		});
-	},
+	}
+	// this.eventBus.$emit("tags", this.tagsList);
+};
+function handlerMove(value: number) {
+	const ulElement = document.querySelector<HTMLElement>(".tags ul")!;
+	if (
+		ulElement.scrollLeft < 0 || ulElement.scrollLeft > ulElement.scrollWidth - ulElement.clientWidth
+	)
+		return;
+	if (value < 0) {
+		ulElement.scrollLeft += Math.max(value, -1 * ulElement.scrollLeft);
+	} else {
+		ulElement.scrollLeft += Math.min(
+			value,
+			ulElement.scrollWidth - ulElement.clientWidth
+		);
+	}
+};
+function handlerShowMenu(event:MouseEvent) {
+	currentId.value = (event.target as any).id;
+	// 使用在当前relative相对位置确定菜单位置
+	const menuContain = document.querySelector<HTMLElement>(".tagItem-menu")!;
+	if (event.pageX + 80 > document.body.clientWidth) {
+		menuContain.style.left =
+			document.body.clientWidth - 80 - (collapse.value ? 65 : 250) + "px";
+	} else {
+		menuContain.style.left =
+			event.pageX - (collapse.value ? 65 : 250) + "px";
+	}
+	showMenu.value = true;
 };
 </script>
 
@@ -228,7 +205,7 @@ export default {
 	top: 30px;
 
 	.tagItem-menu-contain {
-		background-color: #efefef;
+		background-color: #fff;
 		width: 80px;
 		padding: 5px 10px;
 		font-size: 14px;
@@ -240,7 +217,7 @@ export default {
 
 		& li:hover {
 			cursor: pointer;
-			background-color: #2d8cf0;
+			background-color: #242f42;
 			color: #ffffff;
 		}
 	}
@@ -309,7 +286,7 @@ export default {
 
 		.el-icon-close:hover {
 			border-radius: 50%;
-			background-color: #242f42;
+			background-color: #2d8cf0;
 		}
 	}
 }

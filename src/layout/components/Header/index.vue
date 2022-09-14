@@ -15,8 +15,7 @@
 					<div class="svg-container">
 						<SvgIcon
 							:name="system.icon"
-							:height="35"
-							:width="35"
+							:size="35"
 						></SvgIcon>
 					</div>
 					<span>{{ system.title }}</span>
@@ -32,7 +31,7 @@
 						:content="fullscreen ? `取消全屏` : `全屏`"
 						placement="bottom"
 					>
-						<i class="el-icon-rank"></i>
+            <SvgIcon name="full-screen" :size="20" ></SvgIcon>
 					</el-tooltip>
 				</div>
 				<!-- 消息中心 -->
@@ -43,14 +42,14 @@
 						placement="bottom"
 					>
 						<router-link to="/tabs">
-							<i class="el-icon-bell"></i>
+              <SvgIcon name="bell" :size="20" normal="#fff" hover="#000"></SvgIcon>
 						</router-link>
 					</el-tooltip>
 					<span class="btn-bell-badge" v-if="message"></span>
 				</div>
 				<!-- 用户头像 -->
 				<div class="user-avator">
-					<SvgIcon name="user"></SvgIcon>
+					<SvgIcon name="user" :size="25"></SvgIcon>
 				</div>
 				<!-- 用户名下拉菜单 -->
 				<el-dropdown class="user-name" trigger="click" @command="handleCommand">
@@ -79,6 +78,7 @@ import { defineComponent, ref, computed, watch } from 'vue';
 import { ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { useAppStore } from "@/stores/modules/app";
+import { useMenuStore } from "@/stores/modules/menu";
 import { useUserStore } from "@/stores/modules/user";
 import SvgIcon from "@/components/Icon";
 
@@ -91,11 +91,12 @@ export default defineComponent({
     const router = useRouter();
     const appStore = useAppStore();
     const userStore = useUserStore();
+    const menuStore = useMenuStore();
 
     const username = computed(() => userStore.getUserInfo?.username)
-    const subSystems = computed(() => appStore.getSubSystems);
+    const subSystems = computed(() => menuStore.getYwxt);
     const curSystem = computed(() => appStore.getCurSystem);
-    const sysTitle = computed(() => appStore.getSubSystems.filter(sys => sys.path === appStore.getCurSystem)[0]?.title) 
+    const sysTitle = computed(() => menuStore.getYwxt.filter(sys => sys.path === appStore.getCurSystem)[0]?.title) 
     const sidebarCollapse =  computed(() => appStore.getSidebarCollapse);
 
     function handleCommand(command: string) {
@@ -157,10 +158,121 @@ export default defineComponent({
   },
 })
 </script>
-<style lang="scss" scoped>
-.content-box {
-  display: flex;
-  flex-direction: column;
-}
+<style scoped lang="scss">
+	.header {
+		position: relative;
+		box-sizing: border-box;
+		width: 100%;
+		height: 70px;
+		font-size: 22px;
+		color: #fff;
+	}
+
+	.collapse-btn {
+		float: left;
+		padding: 0 21px;
+		cursor: pointer;
+		line-height: 70px;
+	}
+
+	.header .logo {
+		float: left;
+		width: 250px;
+		line-height: 70px;
+	}
+
+	.system-list {
+		float: left;
+		height: 70px;
+		display: flex;
+		align-items: center;
+		user-select: none;
+		cursor: pointer;
+
+		> div {
+			margin-left: 20px;
+			overflow: hidden;
+
+			.svg-container {
+        text-align: center;
+			}
+		}
+
+		& span {
+			font-size: 14px;
+      color: #fff;
+		}
+
+		.is-active {
+			.svg-container svg {
+				transform: translateX(0px);
+			}
+
+			span {
+				color: #1499e0;
+			}
+		}
+	}
+
+	.header-right {
+		float: right;
+		padding-right: 50px;
+	}
+
+	.header-user-con {
+		display: flex;
+		height: 70px;
+		align-items: center;
+	}
+
+	.btn-fullscreen {
+		margin-right: 5px;
+		font-size: 24px;
+	}
+
+	.btn-bell,
+	.btn-fullscreen {
+		position: relative;
+		width: 30px;
+		height: 30px;
+		text-align: center;
+		border-radius: 15px;
+		cursor: pointer;
+	}
+
+	.btn-bell-badge {
+		position: absolute;
+		right: 0;
+		top: -2px;
+		width: 8px;
+		height: 8px;
+		border-radius: 4px;
+		background: #f56c6c;
+		color: #fff;
+	}
+
+	.user-name {
+		margin-left: 10px;
+	}
+
+	.user-avator {
+		margin-left: 20px;
+	}
+
+	.user-avator img {
+		display: block;
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+	}
+
+	.el-dropdown-link {
+		color: #fff;
+		cursor: pointer;
+	}
+
+	.el-dropdown-menu__item {
+		text-align: center;
+	}
 </style>
   

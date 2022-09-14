@@ -45,6 +45,7 @@ export default defineComponent({
         if (valid) {
           loading.value = true;
           userStore.login(ruleForm).then(() => {
+            debugger
             loading.value = false;
             router.replace({
               path: "/",

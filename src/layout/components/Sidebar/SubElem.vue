@@ -2,35 +2,32 @@
   <template v-if="noChild">
     <router-link :to="resolvePath(item, item.path)">
       <el-menu-item :index="resolvePath(item, item.path)">
-        <!-- <SvgIcon class="sidebar-svg" :name="!!item.icon ? item.icon : ( isactive ?  defaultActiveIcon : defaultIcon)">
+        <SvgIcon class="sidebar-svg" :name="!!item.icon ? item.icon : ( isactive ?  defaultActiveIcon : defaultIcon)">
         </SvgIcon>
         <template v-slot:title>
           <span>{{ item.name }}</span>
-        </template> -->
-
-        <elem-item :icon="!!item.icon ? item.icon : ( isactive ?  defaultActiveIcon : defaultIcon)"
-          :title="item.name" />
+        </template>
       </el-menu-item>
     </router-link>
   </template>
   <el-sub-menu v-else :index="resolvePath(item, item.path)">
     <template v-slot:title>
-      <elem-item :icon="!!item.icon ? item.icon : ( isactive ?  defaultActiveIcon : defaultIcon)" :title="item.name">
-      </elem-item>
+      <SvgIcon class="sidebar-svg" :name="!!item.icon ? item.icon : ( isactive ?  defaultActiveIcon : defaultIcon)">
+      </SvgIcon>
+      <span>{{ item.name }}</span>
     </template>
     <sub-elem v-for="child in item.children" :key="child.path" :item="child" :basePath="resolvePath(item, item.path)">
     </sub-elem>
   </el-sub-menu>
 </template>
 <script lang="ts">
-import ElemItem from "./ElemItem.vue";
 import { defineComponent, computed, ref } from 'vue';
 import { useRoute } from 'vue-router'
 import { combinPath } from "@/util";
 import SvgIcon from "@/components/Icon";
 export default defineComponent({
   name: "SubElem",
-  components: { ElemItem, SvgIcon },
+  components: { SvgIcon },
   props: {
     item: {
       type: Object,
@@ -69,3 +66,9 @@ export default defineComponent({
   }
 });
 </script>
+<style scoped lang="scss">
+.sidebar-svg {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+</style>
